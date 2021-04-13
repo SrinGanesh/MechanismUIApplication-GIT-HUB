@@ -391,7 +391,7 @@
             this.groupBox7.Size = new System.Drawing.Size(427, 347);
             this.groupBox7.TabIndex = 2;
             this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Mechansm solving steps viewer";
+            this.groupBox7.Text = "Mechanism solving steps viewer";
             // 
             // button8
             // 
