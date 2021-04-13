@@ -13,7 +13,7 @@ namespace MechanismUIApplication
         protected NodeClass node1;
         protected NodeClass node2;
         protected MechanismClass parent;
-        
+        int abcd;
 
         //properties
         public Color Color
