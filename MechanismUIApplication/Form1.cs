@@ -246,6 +246,8 @@ namespace MechanismUIApplication
                 lin = graphPane.AddCurve("", _pointPairList, Color.Green, SymbolType.Default);
                 AddToPrismaticJoint(prisLink1, prisLink2, pointVal, slope);
                 RefreshPane();
+                prisCount = 0;
+                prisSelect = 0;
                 hoverPath = -1;
             }
             //base
@@ -1005,6 +1007,11 @@ namespace MechanismUIApplication
 
                 
             }
+
+           //foreach (JointClass _joint in mechanism.Joints.GroupBy(x => x.Node1.Number))
+            //{
+                //tst.Text += Convert.ToString(_joint.Node1.Number);
+            //}
         }
         
 
@@ -1365,9 +1372,11 @@ namespace MechanismUIApplication
                 bool found = false;int u, w;
                 int item = sessionVar.UnsolvedQueue.Dequeue();
                 //checking for base node
-                foreach (NodeClass _node in _groundLink.BaseNodeList)
+                if (found == false)
+                {
+                    foreach (NodeClass _node in _groundLink.BaseNodeList)
                     {
-                       
+
                         if (item == _node.Number)
                         {
                             found = true;
@@ -1380,65 +1389,96 @@ namespace MechanismUIApplication
 
 
                     }
+                }
                 //for revolute and prismatic
-                foreach (JointClass _joint in mechanism.Joints)
+                if (found == false)
                 {
-                    if (_joint is RevoluteJointClass)
+                    foreach (JointClass _joint in mechanism.Joints)
                     {
-                  
-                        //rev joint can be a 
-                        RevoluteJointClass _revoluteJoint = (RevoluteJointClass)_joint;
-                        if (item == _revoluteJoint.Node1.Number)
+                        //if (_joint is RevoluteJointClass)
+                        //{
+
+                        //    //rev joint can be a 
+                        //    RevoluteJointClass _revoluteJoint = (RevoluteJointClass)_joint;
+                        //    if (item == _revoluteJoint.Node1.Number)
+                        //    {
+
+                        //        if (sessionVar.ParentNode[item] == _inputNode.Number)
+                        //        {
+
+                        //            found = true;
+                        //            stepSequence.Items.Add("Step " + Convert.ToString(sessionVar.StepCount) + " : " + "Node" + " " + Convert.ToString(item) + " " + "Solved");
+                        //            sessionVar.MechStatus = "Node " + Convert.ToString(item) + " " + " is adjacent to input node " + Convert.ToString(sessionVar.ParentNode[item]) + "present on the input link";
+                        //            inputSolverCodeText(item);
+                        //        }
+                        //        else if (_revoluteJoint.rpDyadFinder(item, numberOfVertices, adjMat, sessionVar, out u, out w))
+                        //        {
+                        //            found = true;
+                        //            stepSequence.Items.Add("Step " + Convert.ToString(sessionVar.StepCount) + " : " + "Node" + " " + Convert.ToString(item) + " " + "Solved");
+                        //            sessionVar.MechStatus = "Node " + Convert.ToString(item) + " forms RR-dyad with " + Convert.ToString(u) + " and " + Convert.ToString(w);
+                        //            rrDyadSolverCodeText(item);
+                        //        }
+                        //    }
+                        //}
+                       if (_joint is PrismaticJointClass)
                         {
-                                                     
+                            PrismaticJointClass _prismaticJoint = (PrismaticJointClass)_joint;
+                            if (item == _prismaticJoint.Node1.Number)
+                            {
+                                found = true;
+
+                                stepSequence.Items.Add("Step " + Convert.ToString(sessionVar.StepCount) + " : " + "Node" + " " + Convert.ToString(item) + " " + "Solved");
+                                sessionVar.MechStatus = "Node " + Convert.ToString(item) + " " +"is a prismatic joint";
+                                rpDyadSolverCodeText(item);
+                            }
+                        }
+                        //add prop if any other joint needs to be added in future
+                    }
+                }
+                if(found == false)
+                {
+                    foreach(NodeClass _node in _groundLink.NodesList)
+                    {
+                        if (item == _node.Number)
+                        {
+
                             if (sessionVar.ParentNode[item] == _inputNode.Number)
                             {
-                                
+
                                 found = true;
                                 stepSequence.Items.Add("Step " + Convert.ToString(sessionVar.StepCount) + " : " + "Node" + " " + Convert.ToString(item) + " " + "Solved");
-                                sessionVar.MechStatus = "Node " + Convert.ToString(item) + " " + " is adjacent to input node " + Convert.ToString(sessionVar.ParentNode[item]) + "present on the input link";
-                                inputSolverCodeText(item);  
+                                sessionVar.MechStatus = "Node " + Convert.ToString(item) + " " + " is adjacent to input node " + " " + Convert.ToString(sessionVar.ParentNode[item]) + "present on the input link";
+                                inputSolverCodeText(item);
                             }
-                            else if (_revoluteJoint.rpDyadFinder(item, numberOfVertices, adjMat ,sessionVar, out u, out w))
+                            else if (rpDyadFinder(item, numberOfVertices, adjMat, sessionVar, out u, out w))
                             {
                                 found = true;
                                 stepSequence.Items.Add("Step " + Convert.ToString(sessionVar.StepCount) + " : " + "Node" + " " + Convert.ToString(item) + " " + "Solved");
                                 sessionVar.MechStatus = "Node " + Convert.ToString(item) + " forms RR-dyad with " + Convert.ToString(u) + " and " + Convert.ToString(w);
                                 rrDyadSolverCodeText(item);
                             }
-                        } 
-                    }
-                    else if (_joint is PrismaticJointClass)
-                    {
-                        PrismaticJointClass _prismaticJoint = (PrismaticJointClass)_joint;
-                        if (item == _prismaticJoint.Node1.Number)
-                        {
-                            found = true;
-
-                            stepSequence.Items.Add("Step " + Convert.ToString(sessionVar.StepCount) + " : " + "Node" + " " + Convert.ToString(item) + " " + "Solved");
-                            sessionVar.MechStatus = "Node " + Convert.ToString(item) + "is a prismatic joint";
-                            rpDyadSolverCodeText(item);
                         }
                     }
-                    //add prop if any other joint needs to be added in future
                 }
-                    //coupler node
+                //coupler node
+                if (found == false)
+                {
                     foreach (LinkClass _link in mechanism.Links)
+                    {
+                        if (_link is TriangularLinkClass)
                         {
-                            if (_link is TriangularLinkClass)
+                            TriangularLinkClass _triangularLink = (TriangularLinkClass)_link;
+                            if (_triangularLink.couplerFinder(item, numberOfVertices, adjMat, sessionVar, out u, out w))
                             {
-                                TriangularLinkClass _triangularLink = (TriangularLinkClass)_link;
-                                if (_triangularLink.couplerFinder(item,numberOfVertices,adjMat,sessionVar ,out u, out w))
-                                {
-                                    found = true;
-                            stepSequence.Items.Add("Step " + Convert.ToString(sessionVar.StepCount) + " : " + "Node" + " " + Convert.ToString(item) + " " + "Solved");
-                            sessionVar.MechStatus = "Node " + Convert.ToString(item) + " forms Coupler with " + Convert.ToString(u) + " and " + Convert.ToString(w);
-                            couplerSolverCodeText(item);
-                        }
-
+                                found = true;
+                                stepSequence.Items.Add("Step " + Convert.ToString(sessionVar.StepCount) + " : " + "Node" + " " + Convert.ToString(item) + " " + "Solved");
+                                sessionVar.MechStatus = "Node " + Convert.ToString(item) + " forms Coupler with " + Convert.ToString(u) + " and " + Convert.ToString(w);
+                                couplerSolverCodeText(item);
                             }
+
                         }
-                    
+                    }
+                }
 
 
              
@@ -1494,6 +1534,47 @@ namespace MechanismUIApplication
                
             }
 
+        public bool rpDyadFinder(int u, int numberOfVertices, int[,] adjMat, SessionDataClass _session, out int u1, out int w)
+        {
+            u1 = -1; w = -1;
+            int count = 0;
+            int count1 = 0;
+            for (int j = 0; j < numberOfVertices; j++)
+            {
+                if (adjMat[u, j] == 1)
+                {
+                    if (_session.NodeColorList[j] == Color.Green)
+                    {
+                        count++;
+                        if (count == 1)
+                            u1 = j;
+                        if (count == 2)
+                            w = j;
+                    }
+                }
+            }
+            if (count == 2)
+            {
+                for (int j = 0; j < numberOfVertices; j++)
+                {
+                    if (adjMat[u1, j] == 1)
+                    {
+                        if (j == w)
+                        {
+                            count1++;
+                        }
+                    }
+                }
+            }
+            else
+                count1 = -1;
+            if (count1 == 1)
+                return false;
+            else if (count1 == 0)
+                return true;
+            else
+                return false;
+        }
         private void splitContainer6_Panel2_Paint(object sender, PaintEventArgs e)
         {
 
