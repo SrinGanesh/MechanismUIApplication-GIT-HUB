@@ -91,7 +91,6 @@
             this.splitContainer11 = new System.Windows.Forms.SplitContainer();
             this.zedGraphControl3 = new ZedGraph.ZedGraphControl();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button9 = new System.Windows.Forms.Button();
             this.tabPage2.SuspendLayout();
             this.sPanel.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -685,7 +684,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.button9);
             this.groupBox2.Controls.Add(this.radioButton3);
             this.groupBox2.Controls.Add(this.radioButton4);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -962,16 +960,6 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // button9
-            // 
-            this.button9.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button9.Location = new System.Drawing.Point(163, 16);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(90, 31);
-            this.button9.TabIndex = 7;
-            this.button9.Text = "Segment";
-            this.button9.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1111,7 +1099,6 @@
         private System.Windows.Forms.Button sButton;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.SplitContainer splitContainer16;
-        private System.Windows.Forms.Button button9;
     }
 }
 
