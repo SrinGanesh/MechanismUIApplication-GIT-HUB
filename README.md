@@ -1,0 +1,1 @@
+This repository helps people in academia better study and understand the working of a 4 and 6 DOF planar mechanisms. This application is developed using C# and the solvers are coded in C++ and are used as DLLs. This application is developed leveraging Visual Studio.
